@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: __CI_PROJECT_NAME__-celery
+  namespace: __NAMESPACE_NAME__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: __CI_PROJECT_NAME__-celery
+      app: __CI_PROJECT_NAME__-celery
+  template:
+    metadata:
+      labels:
+        run: __CI_PROJECT_NAME__-celery
+        app: __CI_PROJECT_NAME__-celery
+    spec:
+      containers:
+      - name: __CI_PROJECT_NAME__-celery
+        image: __REPOSITORY_IMAGE__
+        command: ["celery", "-A", "<project_name>", "worker", "-l", "info", "--concurrency=3"]
+        volumeMounts:
+
+        - name: __CI_PROJECT_NAME__-media-celery
+          mountPath: /var/www/admin-panel/media
+      volumes:
+      - name: __CI_PROJECT_NAME__-media-celery
+        persistentVolumeClaim:
+          claimName: __NAMESPACE_NAME__-claim-celery-1
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: __NAMESPACE_NAME__-celery-1
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/ubuntu/kuber_project_data/__NAMESPACE_NAME__/media"
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: __NAMESPACE_NAME__-claim-celery-1
+  namespace: __NAMESPACE_NAME__
+spec:
+  volumeName: __NAMESPACE_NAME__-celery-1
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi

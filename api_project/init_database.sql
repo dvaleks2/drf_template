@@ -1,0 +1,8 @@
+
+CREATE DATABASE dbname;
+CREATE USER dbuser with password 'dbpwd';
+ALTER ROLE dbuser SET CLIENT_ENCODING TO 'utf8';
+ALTER ROLE dbuser SET DEFAULT_TRANSACTION_ISOLATION TO 'read committed';
+ALTER ROLE dbuser SET TIMEZONE TO 'UTC'; 
+GRANT ALL PRIVILEGES ON DATABASE dbname to dbuser;
+        

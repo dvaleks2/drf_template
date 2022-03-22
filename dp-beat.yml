@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: __CI_PROJECT_NAME__-beat
+  namespace: __NAMESPACE_NAME__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: __CI_PROJECT_NAME__-beat
+      app: __CI_PROJECT_NAME__-beat
+  template:
+    metadata:
+      labels:
+        run: __CI_PROJECT_NAME__-beat
+        app: __CI_PROJECT_NAME__-beat
+    spec:
+      containers:
+        - name: __CI_PROJECT_NAME__-beat
+          image: __REPOSITORY_IMAGE__
+          command: ["celery", "-A", "<project_name>", "beat", "-l", "debug"]
+      imagePullSecrets:
+      - name: gitlab-registry

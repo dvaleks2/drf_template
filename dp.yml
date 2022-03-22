@@ -1,0 +1,118 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: nginx
+  name: __CI_PROJECT_NAME__-deployment
+  namespace: __NAMESPACE_NAME__
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: __CI_PROJECT_NAME__
+      app: __CI_PROJECT_NAME__
+  template:
+    metadata:
+      labels:
+        run: __CI_PROJECT_NAME__
+        app: __CI_PROJECT_NAME__
+    spec:
+      containers:
+      - name: __CI_PROJECT_NAME__
+        image: __REPOSITORY_IMAGE__
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+
+        - name: __CI_PROJECT_NAME__-media
+          mountPath: /var/www/app/media
+
+        - name: __CI_PROJECT_NAME__-static
+          mountPath: /var/www/app/static
+      volumes:
+
+      - name: __CI_PROJECT_NAME__-static
+        persistentVolumeClaim:
+          claimName: __NAMESPACE_NAME__-claim-static
+
+      - name: __CI_PROJECT_NAME__-media
+        persistentVolumeClaim:
+          claimName: __NAMESPACE_NAME__-claim-media
+
+      imagePullSecrets:
+      - name: gitlab-registry
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: __NAMESPACE_NAME__-media
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/ubuntu/kuber_project_data/__NAMESPACE_NAME__/media"
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: __NAMESPACE_NAME__-claim-media
+  namespace: __NAMESPACE_NAME__
+spec:
+  volumeName: __NAMESPACE_NAME__-media
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: __NAMESPACE_NAME__-static
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/home/ubuntu/kuber_project_data/__NAMESPACE_NAME__/static"
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: __NAMESPACE_NAME__-claim-static
+  namespace: __NAMESPACE_NAME__
+spec:
+  volumeName: __NAMESPACE_NAME__-static
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: photowhy-backend
+  namespace: __NAMESPACE_NAME__
+spec:
+  selector:
+    app: __CI_PROJECT_NAME__
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000

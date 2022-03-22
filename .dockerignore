@@ -1,0 +1,10 @@
+.git
+.idea
+docker-compose.yaml
+README.md
+Makefile
+dp*
+.env.example
+.env
+.DS_Store
+.vscode
