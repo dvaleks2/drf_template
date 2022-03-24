@@ -20,7 +20,7 @@ spec:
       containers:
       - name: __CI_PROJECT_NAME__-celery
         image: __REPOSITORY_IMAGE__
-        command: ["celery", "-A", "<project_name>", "worker", "-l", "info", "--concurrency=3"]
+        command: ["celery", "-A", "project_name", "worker", "-l", "info", "--concurrency=3"]
         volumeMounts:
 
         - name: __CI_PROJECT_NAME__-media-celery

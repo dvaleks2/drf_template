@@ -20,6 +20,6 @@ spec:
       containers:
         - name: __CI_PROJECT_NAME__-beat
           image: __REPOSITORY_IMAGE__
-          command: ["celery", "-A", "<project_name>", "beat", "-l", "debug"]
+          command: ["celery", "-A", "project_name", "beat", "-l", "debug"]
       imagePullSecrets:
       - name: gitlab-registry

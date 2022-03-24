@@ -69,6 +69,11 @@ GRANT ALL PRIVILEGES ON DATABASE {db_name} to {db_user};
     print('do:\n sudo -su postgres')
     print('psql -U postgres -f init_database.sql')
 
+    print('')
+    print('python manage.py makemigrations')
+    print('python manage.py migrate')
+    print('python manage.py runserver')
+
 
 if __name__ == "__main__":
     main()

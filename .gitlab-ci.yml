@@ -13,8 +13,8 @@ variables:
   DOCKER_HOST: "tcp://localhost:2375"
   REPOSITORY_IMAGE: "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_IID}"
   REPOSITORY_IMAGE_NGINX: "${CI_REGISTRY}/${CI_PROJECT_PATH}:nginx-${CI_PIPELINE_IID}"
-  CONFIG_FILE: "<project_name>/configs/kuber_config.py"
-  CONFIG_FILE_EXAMPLE: "<project_name>/configs/example_config.py.txt"
+  CONFIG_FILE: "project_name/configs/kuber_config.py"
+  CONFIG_FILE_EXAMPLE: "project_name/configs/example_config.py.txt"
 
 APP_Image_Package:
   tags:
@@ -24,18 +24,18 @@ APP_Image_Package:
     - master
   image: docker:18.09.6-dind
   script:
-    - sed -i -e "s@__SECRET_KEY__@${SECRET_KEY}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__ALLOWED_HOSTS__@${ALLOWED_HOSTS}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_USER__@${DB_USER}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__REDIS_URL__@${REDIS_URL}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__REDIS_PORT__@${REDIS_PORT}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__FCM_KEY__@${FCM_KEY}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s#__EMAIL_HOST_USER__#${EMAIL_HOST_USER}#g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__EMAIL_HOST_PASSWORD__@${EMAIL_HOST_PASSWORD}@g" <api_project>/<project_name>/configs/kuber_config.py
+    - sed -i -e "s@__SECRET_KEY__@${SECRET_KEY}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__ALLOWED_HOSTS__@${ALLOWED_HOSTS}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_USER__@${DB_USER}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__REDIS_URL__@${REDIS_URL}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__REDIS_PORT__@${REDIS_PORT}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__FCM_KEY__@${FCM_KEY}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s#__EMAIL_HOST_USER__#${EMAIL_HOST_USER}#g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__EMAIL_HOST_PASSWORD__@${EMAIL_HOST_PASSWORD}@g" api_project/project_name/configs/kuber_config.py
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN ${CI_REGISTRY}
     - docker build -t ${REPOSITORY_IMAGE} .
     - docker push ${REPOSITORY_IMAGE}
@@ -79,19 +79,19 @@ PROJECT_Deploy:
     - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dp-celery.yml
     - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dp-celery.yml
     - sed -i -e "s@__REPOSITORY_IMAGE__@${REPOSITORY_IMAGE}@g" dp-celery.yml
-    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_USER__@${DB_USER}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" <api_project>/<project_name>/configs/kuber_config.py
+    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_USER__@${DB_USER}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" api_project/project_name/configs/kuber_config.py
     - kubectl apply -f dp-celery.yml
     #Beat
     - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dp-beat.yml
     - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dp-beat.yml
     - sed -i -e "s@__REPOSITORY_IMAGE__@${REPOSITORY_IMAGE}@g" dp-beat.yml
-    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_USER__@${DB_USER}@g" <api_project>/<project_name>/configs/kuber_config.py
-    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" <api_project>/<project_name>/configs/kuber_config.py
+    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_USER__@${DB_USER}@g" api_project/project_name/configs/kuber_config.py
+    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" api_project/project_name/configs/kuber_config.py
     - kubectl apply -f dp-beat.yml
