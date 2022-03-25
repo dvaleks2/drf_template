@@ -1,5 +1,6 @@
 import subprocess
 import os
+from django.core.management.utils import get_random_secret_key
 
 
 def replace_str_in_file(filepath, search, replace):
@@ -30,12 +31,7 @@ def main():
     # set <secret_key> from settings to local_config
     settings_path = f'{project_name}/{project_name}/settings.py'
     local_config_path = os.path.join(configs_path, 'local_config.py')
-    with open(settings_path, 'r') as file:
-        for line in file:
-            if line.startswith('SECRET_KEY'):
-                sk = line.split(' ')[2].strip().replace("'", "")
-                replace_str_in_file(local_config_path, '<secret_key>', sk)
-                break
+    replace_str_in_file(local_config_path, '<secret_key>', get_random_secret_key())
 
     replace_str_in_file(local_config_path, '<db_name>', db_name)
     replace_str_in_file(local_config_path, '<db_user>', db_user)
