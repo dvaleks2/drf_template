@@ -67,7 +67,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: photowhy-nginx
+  name: project-name500-nginx
   namespace: __NAMESPACE_NAME__
 spec:
   selector:
@@ -92,12 +92,12 @@ metadata:
 spec:
   tls:
   - hosts:
-    - onix-systems-photowhy-backend.staging.onix.ua
-    secretName: photowhy-new-sert3
+    - onix-systems-project-name500-backend.staging.onix.ua
+    secretName: project-name500-new-sert3
   rules:
-  - host: onix-systems-photowhy-backend.staging.onix.ua
+  - host: onix-systems-project-name500-backend.staging.onix.ua
     http:
       paths:
       - backend:
-          serviceName: photowhy-nginx
+          serviceName: project-name500-nginx
           servicePort: 80

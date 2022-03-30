@@ -12,7 +12,7 @@ __pycache__/
 local_config.py
 off_local_config.py
 
-photowhy_api/static/**
-photowhy_api/media/**
+static/**
+media/**
 
 celerybeat-schedule

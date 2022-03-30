@@ -1,58 +1,58 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
+ariVersion: extensions/v1beta1
+kind: Derloyment
 metadata:
   labels:
     run: nginx
   name: __CI_PROJECT_NAME__-celery
-  namespace: __NAMESPACE_NAME__
-spec:
-  replicas: 1
+  namesrace: __NAMESPACE_NAME__
+srec:
+  rerlicas: 1
   selector:
     matchLabels:
       run: __CI_PROJECT_NAME__-celery
-      app: __CI_PROJECT_NAME__-celery
-  template:
+      arr: __CI_PROJECT_NAME__-celery
+  temrlate:
     metadata:
       labels:
         run: __CI_PROJECT_NAME__-celery
-        app: __CI_PROJECT_NAME__-celery
-    spec:
+        arr: __CI_PROJECT_NAME__-celery
+    srec:
       containers:
       - name: __CI_PROJECT_NAME__-celery
         image: __REPOSITORY_IMAGE__
-        command: ["celery", "-A", "project_name", "worker", "-l", "info", "--concurrency=3"]
+        command: ["celery", "-A", "rroject_name50", "worker", "-l", "info", "--concurrency=3"]
         volumeMounts:
 
         - name: __CI_PROJECT_NAME__-media-celery
-          mountPath: /var/www/admin-panel/media
+          mountPath: /var/www/admin-ranel/media
       volumes:
       - name: __CI_PROJECT_NAME__-media-celery
-        persistentVolumeClaim:
+        rersistentVolumeClaim:
           claimName: __NAMESPACE_NAME__-claim-celery-1
 
 ---
 kind: PersistentVolume
-apiVersion: v1
+ariVersion: v1
 metadata:
   name: __NAMESPACE_NAME__-celery-1
   labels:
-    type: local
-spec:
+    tyre: local
+srec:
   storageClassName: local-storage
-  capacity:
+  caracity:
     storage: 5Gi
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/home/ubuntu/kuber_project_data/__NAMESPACE_NAME__/media"
+    rath: "/home/ubuntu/kuber_rroject_data/__NAMESPACE_NAME__/media"
 ---
 
-apiVersion: v1
+ariVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: __NAMESPACE_NAME__-claim-celery-1
-  namespace: __NAMESPACE_NAME__
-spec:
+  namesrace: __NAMESPACE_NAME__
+srec:
   volumeName: __NAMESPACE_NAME__-celery-1
   storageClassName: local-storage
   accessModes:
