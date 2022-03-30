@@ -20,8 +20,6 @@ def main():
 
     cmd = ['django-admin', 'startproject', project_name]
     subprocess.run(cmd)
-    # res = subprocess.run(cmd, stdout=subprocess.PIPE)
-    # res = res.stdout.decode('utf-8')
 
     # copy configs folder to project
     configs_path = f'{project_name}/{project_name}/configs'
@@ -31,7 +29,7 @@ def main():
     # set <secret_key> from settings to local_config
     settings_path = f'{project_name}/{project_name}/settings.py'
     local_config_path = os.path.join(configs_path, 'local_config.py')
-    replace_str_in_file(local_config_path, '<secret_key>', get_random_secret_key())
+    replace_str_in_file(local_config_path, '<secret_key>', f'django-insecure-{get_random_secret_key()}')
 
     replace_str_in_file(local_config_path, '<db_name>', db_name)
     replace_str_in_file(local_config_path, '<db_user>', db_user)

@@ -1,4 +1,4 @@
-import local_config
+import project_name5.project_name5.configs.local_config
 
 items = [i for i in vars(local_config).items()
          if i[0].isupper() and not i[0].startswith('__')]
