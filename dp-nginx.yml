@@ -67,7 +67,7 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: project-name550-nginx
+  name: drf-project-nginx
   namespace: __NAMESPACE_NAME__
 spec:
   selector:
@@ -92,12 +92,12 @@ metadata:
 spec:
   tls:
   - hosts:
-    - onix-systems-project-name550-backend.staging.onix.ua
-    secretName: project-name550-new-sert3
+    - onix-systems-drf-project.staging.onix.ua
+    secretName: drf-project-new-sert3
   rules:
-  - host: onix-systems-project-name550-backend.staging.onix.ua
+  - host: onix-systems-drf-project.staging.onix.ua
     http:
       paths:
       - backend:
-          serviceName: project-name550-nginx
+          serviceName: drf-project-nginx
           servicePort: 80

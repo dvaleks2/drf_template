@@ -3,9 +3,9 @@ import os
 
 
 def replace_str_in_file(filepath, *search_replace_pairs):
-    with open(filepath, "rt") as file:
+    with open(filepath, "r") as file:
         x = file.read()
-    with open(filepath, "wt") as file:
+    with open(filepath, "w") as file:
         for pair in search_replace_pairs:
             search = pair[0]
             replace = pair[1]
@@ -54,43 +54,43 @@ def main():
           f'- urls.py\n'
           f'- wsgi.py\n- asgi.py\n')
 
-    for filepath in (os.path.join(cwd, '.gitlab-ci.yml'),
-                     os.path.join(cwd, 'Dockerfile'),
-                     os.path.join(cwd, 'Dockerfile.nginx'),
-                     os.path.join(cwd, f'{old_name}.conf'),
-                     os.path.join(cwd, 'dp-celery.yml'),
-                     os.path.join(cwd, 'dp-beat.yml')):
-        replace_str_in_file(filepath, old_name, new_name)
-
-    # rename project.conf
-    cmd = ['mv', os.path.join(cwd, f'{old_name}.conf'),
-           os.path.join(cwd, f'{new_name}.conf')]
-    subprocess.run(cmd)
-
-    print(f'replaced {old_name} with {new_name} in:\n'
-          f'- Dockerfile\n- Dockerfile.nginx\n'
-          f'- .gitlab-ci.yml\n'
-          f'- dp-celery.yml\n'
-          f'- dp-beat.yml\n'
-          f'- <project>.conf (renamed to {new_name}.conf)\n')
+    # for filepath in (os.path.join(cwd, '.gitlab-ci.yml'),
+    #                  os.path.join(cwd, 'Dockerfile'),
+    #                  os.path.join(cwd, 'Dockerfile.nginx'),
+    #                  os.path.join(cwd, f'{old_name}.conf'),
+    #                  os.path.join(cwd, 'dp-celery.yml'),
+    #                  os.path.join(cwd, 'dp-beat.yml')):
+    #     replace_str_in_file(filepath, old_name, new_name)
+    #
+    # # rename project.conf
+    # cmd = ['mv', os.path.join(cwd, f'{old_name}.conf'),
+    #        os.path.join(cwd, f'{new_name}.conf')]
+    # subprocess.run(cmd)
+    #
+    # print(f'replaced {old_name} with {new_name} in:\n'
+    #       f'- Dockerfile\n- Dockerfile.nginx\n'
+    #       f'- .gitlab-ci.yml\n'
+    #       f'- dp-celery.yml\n'
+    #       f'- dp-beat.yml\n'
+    #       f'- <project>.conf (renamed to {new_name}.conf)\n')
 
     # rename folders
     cmd = ['mv', django_project_folder, new_django_project_folder]
     subprocess.run(cmd)
     cmd = ['mv', project_path, new_project_path]
     subprocess.run(cmd)
-    print(f'renamed fodlers from {old_name} to {new_name}\n')
+    print(f'renamed folders from {old_name} to {new_name}\n')
 
-    should_do = input('(?) Replace <project-name> in dp.yml and dp-nginx.yml? y/n\n'
-                      'Will replace hyphened project name *\n'
-                      '- project name where " _ " is replaced with " - "\n')
-    if should_do.lower() == 'y':
-        old_hyphened_name = old_name.replace('_', '-')
-        new_hyphened_name = new_name.replace('_', '-')
-        for filepath in (os.path.join(cwd, 'dp.yml'),
-                         os.path.join(cwd, 'dp-nginx.yml')):
-            replace_str_in_file(filepath,
-                                [old_hyphened_name, new_hyphened_name])
+    # should_do = input('(?) Replace <project-name> in dp.yml and dp-nginx.yml? y/n\n'
+    #                   'Will replace hyphened project name *\n'
+    #                   '- project name where " _ " is replaced with " - "\n')
+    # if should_do.lower() == 'y':
+    #     old_hyphened_name = old_name.replace('_', '-')
+    #     new_hyphened_name = new_name.replace('_', '-')
+    #     for filepath in (os.path.join(cwd, 'dp.yml'),
+    #                      os.path.join(cwd, 'dp-nginx.yml')):
+    #         replace_str_in_file(filepath,
+    #                             [old_hyphened_name, new_hyphened_name])
 
     print('done!')
 

@@ -3,9 +3,9 @@ from django.core.management.utils import get_random_secret_key
 
 
 def replace_str_in_file(filepath, *search_replace_pairs):
-    with open(filepath, "rt") as file:
+    with open(filepath, "r") as file:
         x = file.read()
-    with open(filepath, "wt") as file:
+    with open(filepath, "w") as file:
         for pair in search_replace_pairs:
             search = pair[0]
             replace = pair[1]

@@ -4,94 +4,74 @@ services:
 
 stages:
   - build
-  - rackage
-  - derloy
+  - package
+  - deploy
   - analysis
 
 variables:
   DOCKER_DRIVER: overlay
-  DOCKER_HOST: "tcr://localhost:2375"
+  DOCKER_HOST: "tcp://localhost:2375"
   REPOSITORY_IMAGE: "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_IID}"
   REPOSITORY_IMAGE_NGINX: "${CI_REGISTRY}/${CI_PROJECT_PATH}:nginx-${CI_PIPELINE_IID}"
-  CONFIG_FILE: "rroject_name50/configs/kuber_config.ry"
-  CONFIG_FILE_EXAMPLE: "rroject_name50/configs/examrle_config.ry.txt"
+  CONFIG_FILE: "project_50/configs/kuber_config.py"
+  CONFIG_FILE_EXAMPLE: "project_50/configs/example_config.py.txt"
 
 APP_Image_Package:
   tags:
     - kuber
-  stage: rackage
+  stage: package
   only:
     - master
   image: docker:18.09.6-dind
-  scrirt:
-    - sed -i -e "s@__SECRET_KEY__@${SECRET_KEY}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__ALLOWED_HOSTS__@${ALLOWED_HOSTS}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_USER__@${DB_USER}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__REDIS_URL__@${REDIS_URL}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__REDIS_PORT__@${REDIS_PORT}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__FCM_KEY__@${FCM_KEY}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s#__EMAIL_HOST_USER__#${EMAIL_HOST_USER}#g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__EMAIL_HOST_PASSWORD__@${EMAIL_HOST_PASSWORD}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - docker login -u gitlab-ci-token -r $CI_BUILD_TOKEN ${CI_REGISTRY}
+  script:
+    # sed works as replace WHAT WITH WHERE
+    - sed -i -e "s@__SECRET_KEY__@${SECRET_KEY}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__ALLOWED_HOSTS__@${ALLOWED_HOSTS}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__DB_USER__@${DB_USER}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" project_50/project_50/configs/kuber_config.py
+
+    - sed -i -e "s@__REDIS_URL__@${REDIS_URL}@g" project_50/project_50/configs/kuber_config.py
+    - sed -i -e "s@__REDIS_PORT__@${REDIS_PORT}@g" project_50/project_50/configs/kuber_config.py
+
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN ${CI_REGISTRY}
     - docker build -t ${REPOSITORY_IMAGE} .
-    - docker rush ${REPOSITORY_IMAGE}
+    - docker push ${REPOSITORY_IMAGE}
 
 NGINX_Image_Package:
   tags:
     - kuber
-  stage: rackage
+  stage: package
   only:
     - master
   image: docker:18.09.6-dind
-  scrirt:
-    - docker login -u gitlab-ci-token -r $CI_BUILD_TOKEN ${CI_REGISTRY}
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN ${CI_REGISTRY}
     - docker build -f Dockerfile.nginx -t ${REPOSITORY_IMAGE_NGINX} .
-    - docker rush ${REPOSITORY_IMAGE_NGINX}
+    - docker push ${REPOSITORY_IMAGE_NGINX}
 
 
-PROJECT_Derloy:
+PROJECT_Deploy:
   tags:
     - kuber
-  stage: derloy
+  stage: deploy
   only:
     - master
   image: roffe/kubectl:v1.13.2
-  scrirt:
-    - kubectl config set-cluster test-cluster --server=$(kubectl describe services | grer IP | sed -E 's/IP:[[:srace:]]+//' | sed -E 's/Tyre:[[:srace:]]+//' | tr -d ClusterIP)
-    - NAMESPACE_NAME=$(echo -e gitder-$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME | tr -d _)
-    - kubectl create secret -n "$NAMESPACE_NAME" docker-registry gitlab-registry --docker-server="$CI_REGISTRY" --docker-username="$REGISTRY_DEPLOY_LOGIN" --docker-rassword="$REGISTRY_DEPLOY_TOKEN" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl rerlace -n "$NAMESPACE_NAME" --force -f -
+  script:
+    - kubectl config set-cluster test-cluster --server=$(kubectl describe services | grep IP | sed -E 's/IP:[[:space:]]+//' | sed -E 's/Type:[[:space:]]+//' | tr -d ClusterIP)
+    - NAMESPACE_NAME=$(echo -e gitdep-$CI_PROJECT_NAMESPACE-$CI_PROJECT_NAME | tr -d _)
+    - kubectl create secret -n "$NAMESPACE_NAME" docker-registry gitlab-registry --docker-server="$CI_REGISTRY" --docker-username="$REGISTRY_DEPLOY_LOGIN" --docker-password="$REGISTRY_DEPLOY_TOKEN" --docker-email="$GITLAB_USER_EMAIL" -o yaml --dry-run | kubectl replace -n "$NAMESPACE_NAME" --force -f -
     - CI_PROJECT_NAME=$(echo -e $CI_PROJECT_NAME | tr -d _)
-    #Arr
-    - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dr.yml
-    - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dr.yml
-    - sed -i -e "s@__REPOSITORY_IMAGE__@${REPOSITORY_IMAGE}@g" dr.yml
-    - kubectl arrly -f dr.yml
+    #App
+    - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dp.yml
+    - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dp.yml
+    - sed -i -e "s@__REPOSITORY_IMAGE__@${REPOSITORY_IMAGE}@g" dp.yml
+    - kubectl apply -f dp.yml
     #Nginx
-    - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dr-nginx.yml
-    - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dr-nginx.yml
-    - sed -i -e "s@__REPOSITORY_IMAGE_NGINX__@${REPOSITORY_IMAGE_NGINX}@g" dr-nginx.yml
-    - kubectl arrly -f dr-nginx.yml
-    #Celery
-    - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dr-celery.yml
-    - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dr-celery.yml
-    - sed -i -e "s@__REPOSITORY_IMAGE__@${REPOSITORY_IMAGE}@g" dr-celery.yml
-    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_USER__@${DB_USER}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - kubectl arrly -f dr-celery.yml
-    #Beat
-    - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dr-beat.yml
-    - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dr-beat.yml
-    - sed -i -e "s@__REPOSITORY_IMAGE__@${REPOSITORY_IMAGE}@g" dr-beat.yml
-    - sed -i -e "s@__DB_HOST__@${DB_HOST}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_PORT__@${DB_PORT}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_NAME__@${DB_NAME}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_USER__@${DB_USER}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - sed -i -e "s@__DB_PASSWORD__@${DB_PASSWORD}@g" rroject_name50/rroject_name50/configs/kuber_config.ry
-    - kubectl arrly -f dr-beat.yml
+    - sed -i -e "s@__NAMESPACE_NAME__@${NAMESPACE_NAME}@g" dp-nginx.yml
+    - sed -i -e "s@__CI_PROJECT_NAME__@${CI_PROJECT_NAME}@g" dp-nginx.yml
+    - sed -i -e "s@__REPOSITORY_IMAGE_NGINX__@${REPOSITORY_IMAGE_NGINX}@g" dp-nginx.yml
+    - kubectl apply -f dp-nginx.yml

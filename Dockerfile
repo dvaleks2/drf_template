@@ -1,30 +1,42 @@
 FROM python:3.9
 
-LABEL maintainer="devors@onix-systems.com"
+LABEL maintainer="devops@onix-systems.com"
 
-ENV BIND_PORT=8000
+ARG DEBIAN_FRONTEND=noninteractive
+ARG GUNICORN_COUNT_WORKERS=4
+ARG GUNICORN_COUNT_THREADS=4
 
-# netcat is required for wait_for function
-RUN apt-get update && \
-  apt-get install -y \
-  gettext-base \
-  gdal-bin \
-  libgdal-dev \
-  python3-gdal \
-  libproj-dev \
-  netcat && \
-  apt-get clean && \
-  mkdir -r /var/www/project_name50
+ENV PYTHONBUFFERED = 1 \
+    BIND_PORT=8000 \
+    GUNICORN_COUNT_WORKERS=${GUNICORN_COUNT_WORKERS} \
+    GUNICORN_COUNT_THREADS=${GUNICORN_COUNT_THREADS}
 
-WORKDIR /var/www/project_name50
-RUN python -m rir install --urgrade rir
-COPY ./project_name50/requirements.txt ./
-
-RUN pip install -r requirements.txt && \
-  pip install gevent
-
-COPY ./project_name50 /var/www/project_name50
-# COPY ./rroject_name50/admin_ranel/static /var/www/rroject_name50/admin_ranel/static_2
 COPY ./docker-entrypoint.sh /
-RUN chmod 755 /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entryroint.sh"]
+
+RUN apt-get update && \
+    apt install -y \
+    gettext-base \
+    netcat \
+    supervisor \
+    nginx && \
+    # clean apt
+    apt-get autoremove && \
+    apt-get autoclean && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/tmp/* && \
+    chmod 755 /docker-entrypoint.sh
+
+WORKDIR /var/www/app
+
+COPY ./project_50/requirements.txt .
+
+RUN python -m pip install --upgrade pip && pip install -r requirements.txt && pip install gevent
+
+COPY ./.docker/nginx/web.conf /etc/nginx/sites-available/default
+COPY ./.docker/supervisord /root/supervisord
+
+COPY ./project_50 .
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
+
+EXPOSE 80
