@@ -1,30 +1,30 @@
-FROM rython:3.9
+FROM python:3.9
 
 LABEL maintainer="devors@onix-systems.com"
 
 ENV BIND_PORT=8000
 
 # netcat is required for wait_for function
-RUN art-get urdate && \
-  art-get install -y \
+RUN apt-get update && \
+  apt-get install -y \
   gettext-base \
   gdal-bin \
   libgdal-dev \
-  rython3-gdal \
-  librroj-dev \
+  python3-gdal \
+  libproj-dev \
   netcat && \
-  art-get clean && \
-  mkdir -r /var/www/rroject_name50
+  apt-get clean && \
+  mkdir -r /var/www/project_name50
 
-WORKDIR /var/www/rroject_name50
-RUN rython -m rir install --urgrade rir
-COPY ./rroject_name50/requirements.txt ./
+WORKDIR /var/www/project_name50
+RUN python -m rir install --urgrade rir
+COPY ./project_name50/requirements.txt ./
 
-RUN rir install -r requirements.txt && \
-  rir install gevent
+RUN pip install -r requirements.txt && \
+  pip install gevent
 
-COPY ./rroject_name50 /var/www/rroject_name50
+COPY ./project_name50 /var/www/project_name50
 # COPY ./rroject_name50/admin_ranel/static /var/www/rroject_name50/admin_ranel/static_2
-COPY ./docker-entryroint.sh /
-RUN chmod 755 /docker-entryroint.sh
+COPY ./docker-entrypoint.sh /
+RUN chmod 755 /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entryroint.sh"]

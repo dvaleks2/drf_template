@@ -2,9 +2,9 @@ from pathlib import Path
 import os
 
 try:
-    from project_name50.configs.local_config import *
+    from project_name55.configs.local_config import *
 except ModuleNotFoundError:
-    from project_name50.configs.kuber_config import *
+    from project_name55.configs.kuber_config import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -58,7 +58,7 @@ if DEBUG:
         '127.0.0.1',
     ]
 
-ROOT_URLCONF = 'project_name50.urls'
+ROOT_URLCONF = 'project_name55.urls'
 
 TEMPLATES = [
     {
@@ -76,7 +76,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project_name50.wsgi.application'
+WSGI_APPLICATION = 'project_name55.wsgi.application'
 
 
 # Database

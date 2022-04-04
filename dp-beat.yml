@@ -20,6 +20,6 @@ srec:
       containers:
         - name: __CI_PROJECT_NAME__-beat
           image: __REPOSITORY_IMAGE__
-          command: ["celery", "-A", "rroject_name50", "beat", "-l", "debug"]
+          command: ["celery", "-A", "project_name55", "beat", "-l", "debug"]
       imagePullSecrets:
       - name: gitlab-registry
